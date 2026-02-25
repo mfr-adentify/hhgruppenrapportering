@@ -11,7 +11,14 @@
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
         .metric-card { transition: all 0.2s ease; cursor: pointer; }
         .metric-card:hover { transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
-        .tab-active { border-bottom: 3px solid #3b82f6; color: #1e40af; }
+        
+        /* Forbedret tab-markering */
+        .tab-button { border-bottom: 3px solid transparent; transition: all 0.3s ease; }
+        .tab-active { 
+            border-bottom: 3px solid #1e40af; 
+            color: #1e40af; 
+            background-color: #eff6ff;
+        }
         
         /* Modal Animation */
         .modal-overlay { transition: opacity 0.3s ease; }
@@ -23,6 +30,31 @@
 <body class="p-4 md:p-8">
 
     <div class="max-w-5xl mx-auto">
+        
+        <!-- README / Guide Sektion -->
+        <section class="bg-indigo-900 text-white rounded-2xl p-6 mb-8 shadow-lg border border-indigo-800">
+            <h2 class="text-xl font-bold mb-3 flex items-center">
+                <i class="fas fa-info-circle mr-3 text-indigo-300"></i> README: Om denne rapport
+            </h2>
+            <p class="text-indigo-100 text-sm leading-relaxed mb-6">
+                Denne interaktive rapport præsenterer performance-data fra Google Ads for HH Gruppen ApS. Siden er designet til at give et hurtigt overblik over de vigtigste KPI'er samt dybdegående indsigt i de enkelte metrikker.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-indigo-800/50 p-4 rounded-xl border border-indigo-700/50">
+                    <p class="font-bold text-xs uppercase tracking-wider text-indigo-300 mb-1">Navigation</p>
+                    <p class="text-indigo-100 text-xs">Brug fanerne under overskriften til at skifte mellem data for <strong>Januar</strong> og <strong>Februar</strong>.</p>
+                </div>
+                <div class="bg-indigo-800/50 p-4 rounded-xl border border-indigo-700/50">
+                    <p class="font-bold text-xs uppercase tracking-wider text-indigo-300 mb-1">Interaktivitet</p>
+                    <p class="text-indigo-100 text-xs">Klik på <strong>alle</strong> farvede bokse (både KPI'er og Konverteringstyper) for at få dybere indsigt.</p>
+                </div>
+                <div class="bg-indigo-800/50 p-4 rounded-xl border border-indigo-700/50">
+                    <p class="font-bold text-xs uppercase tracking-wider text-indigo-300 mb-1">Datagrundlag</p>
+                    <p class="text-indigo-100 text-xs">Alle tal er <strong>minimumstal</strong> grundet cookie-lovgivning og brugersamtykke.</p>
+                </div>
+            </div>
+        </section>
+
         <!-- Header -->
         <header class="bg-white rounded-t-2xl shadow-sm p-6 border-x border-t border-gray-100 flex flex-col md:flex-row justify-between items-center">
             <div>
@@ -34,17 +66,17 @@
             </div>
             <div class="mt-4 md:mt-0 text-right">
                 <span class="bg-blue-50 text-blue-600 px-4 py-2 rounded-full text-sm font-semibold" id="dateRangeDisplay">
-                    <i class="far fa-calendar-alt mr-2"></i>1. feb 2026 - 28. feb 2026
+                    <i class="far fa-calendar-alt mr-2"></i>1. jan 2026 - 31. jan 2026
                 </span>
             </div>
         </header>
 
         <!-- Month Navigation -->
         <nav class="bg-white border-x border-b border-gray-100 rounded-b-2xl shadow-sm mb-8 flex overflow-x-auto">
-            <button onclick="switchMonth('januar')" id="tab-januar" class="px-8 py-4 font-bold text-gray-400 hover:text-gray-600 transition-all border-b-3 border-transparent">
+            <button onclick="switchMonth('januar')" id="tab-januar" class="tab-button px-10 py-4 font-bold text-gray-400 hover:text-gray-600 transition-all tab-active">
                 JANUAR
             </button>
-            <button onclick="switchMonth('februar')" id="tab-februar" class="px-8 py-4 font-bold text-gray-400 hover:text-gray-600 transition-all border-b-3 border-transparent tab-active">
+            <button onclick="switchMonth('februar')" id="tab-februar" class="tab-button px-10 py-4 font-bold text-gray-400 hover:text-gray-600 transition-all">
                 FEBRUAR
             </button>
         </nav>
@@ -53,45 +85,80 @@
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             <div onclick="openModal('impressions')" class="metric-card bg-white p-6 rounded-2xl shadow-sm border-l-4 border-blue-500">
                 <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 flex justify-between">Eksponeringer <i class="fas fa-search-plus text-[10px] mt-1 opacity-40"></i></p>
-                <h3 class="text-2xl font-bold text-gray-800" id="stat-impressions">106 t</h3>
+                <h3 class="text-2xl font-bold text-gray-800" id="stat-impressions">389 t</h3>
                 <p class="text-blue-500 text-sm mt-2 font-medium">Rækkevidde</p>
             </div>
             <div onclick="openModal('clicks')" class="metric-card bg-white p-6 rounded-2xl shadow-sm border-l-4 border-yellow-500">
                 <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 flex justify-between">Klik <i class="fas fa-mouse-pointer text-[10px] mt-1 opacity-40"></i></p>
-                <h3 class="text-2xl font-bold text-gray-800" id="stat-clicks">3,05 t</h3>
-                <p class="text-yellow-600 text-sm mt-2 font-medium" id="stat-ctr">CTR: 2,87%</p>
+                <h3 class="text-2xl font-bold text-gray-800" id="stat-clicks">12,6 t</h3>
+                <p class="text-yellow-600 text-sm mt-2 font-medium" id="stat-ctr">CTR: 3,25%</p>
             </div>
             <div onclick="openModal('conversions')" class="metric-card bg-white p-6 rounded-2xl shadow-sm border-l-4 border-green-500">
                 <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 flex justify-between">Konverteringer <i class="fas fa-shopping-cart text-[10px] mt-1 opacity-40"></i></p>
-                <h3 class="text-2xl font-bold text-gray-800" id="stat-conversions">25,00</h3>
-                <p class="text-green-600 text-sm mt-2 font-medium" id="stat-conv-rate">Rate: 0,72%</p>
+                <h3 class="text-2xl font-bold text-gray-800" id="stat-conversions">59,00</h3>
+                <p class="text-green-600 text-sm mt-2 font-medium" id="stat-conv-rate">Rate: 0,47%</p>
             </div>
             <div onclick="openModal('cost')" class="metric-card bg-white p-6 rounded-2xl shadow-sm border-l-4 border-red-500">
                 <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 flex justify-between">Samlet Pris <i class="fas fa-coins text-[10px] mt-1 opacity-40"></i></p>
-                <h3 class="text-2xl font-bold text-gray-800" id="stat-cost">2,56 t kr.</h3>
-                <p class="text-red-600 text-sm mt-2 font-medium" id="stat-cpc">Gns. CPC: 0,84 kr.</p>
+                <h3 class="text-2xl font-bold text-gray-800" id="stat-cost">13,9 t kr.</h3>
+                <p class="text-red-600 text-sm mt-2 font-medium" id="stat-cpc">Gns. CPC: 1,10 kr.</p>
             </div>
         </div>
 
         <!-- Efficiency Section -->
-        <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 mb-8 text-center">
+        <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 mb-4 text-center">
             <h4 class="text-lg font-bold text-gray-800 mb-6 uppercase tracking-widest text-sm">Effektivitets Nøgletal</h4>
             <div class="flex flex-col md:flex-row justify-around gap-8">
                 <div>
                     <p class="text-gray-500 text-sm mb-1">Pris pr. konvertering</p>
-                    <p class="text-3xl font-bold text-gray-800" id="stat-cpa">102 kr.</p>
+                    <p class="text-3xl font-bold text-gray-800" id="stat-cpa">236 kr.</p>
                 </div>
                 <div class="hidden md:block w-px bg-gray-100"></div>
                 <div>
                     <p class="text-gray-500 text-sm mb-1">Klikrate (CTR)</p>
-                    <p class="text-3xl font-bold text-gray-800" id="stat-ctr-big">2,87 %</p>
+                    <p class="text-3xl font-bold text-gray-800" id="stat-ctr-big">3,25 %</p>
                 </div>
                 <div class="hidden md:block w-px bg-gray-100"></div>
                 <div>
                     <p class="text-gray-500 text-sm mb-1">Gns. CPC</p>
-                    <p class="text-3xl font-bold text-gray-800" id="stat-cpc-big">0,84 kr.</p>
+                    <p class="text-3xl font-bold text-gray-800" id="stat-cpc-big">1,10 kr.</p>
                 </div>
             </div>
+        </div>
+
+        <!-- Conversion Details Section -->
+        <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 mb-8">
+            <h4 class="text-center text-lg font-bold text-gray-800 mb-8 uppercase tracking-widest text-sm">Konverteringstyper</h4>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div onclick="openModal('conv_calls')" class="metric-card flex items-center p-4 bg-blue-50 rounded-2xl border border-blue-100">
+                    <div class="w-12 h-12 bg-blue-500 text-white rounded-xl flex items-center justify-center text-xl mr-4">
+                        <i class="fas fa-phone-volume"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-xs font-bold text-blue-600 uppercase tracking-wide flex justify-between">Opkald <i class="fas fa-info-circle opacity-30 text-[10px]"></i></p>
+                        <p class="text-2xl font-bold text-gray-800" id="stat-calls">6</p>
+                    </div>
+                </div>
+                <div onclick="openModal('conv_web')" class="metric-card flex items-center p-4 bg-indigo-50 rounded-2xl border border-indigo-100">
+                    <div class="w-12 h-12 bg-indigo-500 text-white rounded-xl flex items-center justify-center text-xl mr-4">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-xs font-bold text-indigo-600 uppercase tracking-wide flex justify-between">Hjemmeside klik <i class="fas fa-info-circle opacity-30 text-[10px]"></i></p>
+                        <p class="text-2xl font-bold text-gray-800" id="stat-website-clicks">45</p>
+                    </div>
+                </div>
+                <div onclick="openModal('conv_forms')" class="metric-card flex items-center p-4 bg-green-50 rounded-2xl border border-green-100">
+                    <div class="w-12 h-12 bg-green-500 text-white rounded-xl flex items-center justify-center text-xl mr-4">
+                        <i class="fas fa-file-contract"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-xs font-bold text-green-600 uppercase tracking-wide flex justify-between">Formularer <i class="fas fa-info-circle opacity-30 text-[10px]"></i></p>
+                        <p class="text-2xl font-bold text-gray-800" id="stat-forms">8</p>
+                    </div>
+                </div>
+            </div>
+            <p class="text-center text-[10px] text-gray-400 mt-6 italic">Klik på kasserne ovenfor for detaljeret info om de enkelte konverteringer.</p>
         </div>
 
         <!-- Insights & Recommendations -->
@@ -134,23 +201,29 @@
                     <p id="modalValue" class="text-3xl font-bold text-gray-800"></p>
                 </div>
                 <div class="h-1 w-full bg-gray-200 rounded-full">
-                    <div id="modalBar" class="h-1 rounded-full bg-blue-500" style="width: 70%"></div>
+                    <div id="modalBar" class="h-1 rounded-full bg-blue-500" style="width: 100%"></div>
                 </div>
             </div>
             
             <div class="space-y-4">
-                <h4 class="font-bold text-gray-800 text-sm uppercase tracking-wide">Indsigt</h4>
+                <h4 class="font-bold text-gray-800 text-sm uppercase tracking-wide">Vigtig viden</h4>
                 <p id="modalInsight" class="text-gray-600 text-sm leading-relaxed italic border-l-4 border-blue-500 pl-4"></p>
             </div>
+            
+            <div class="mt-6 p-4 bg-orange-50 border border-orange-100 rounded-xl">
+                <p class="text-[10px] text-orange-700 leading-tight italic">
+                    <i class="fas fa-cookie-bite mr-1"></i> <strong>Bemærk:</strong> Dette er minimums-tracking. På grund af lovgivning om samtykke (cookies) trackes kun brugere, der har accepteret fuld tracking. Det reelle tal er derfor altid højere.
+                </p>
+            </div>
 
-            <button onclick="closeModal(event)" class="w-full mt-8 bg-gray-800 text-white font-bold py-4 rounded-xl hover:bg-gray-900 transition-colors">
+            <button onclick="closeModal(event)" class="w-full mt-6 bg-gray-800 text-white font-bold py-4 rounded-xl hover:bg-gray-900 transition-colors">
                 Forstået
             </button>
         </div>
     </div>
 
     <script>
-        let currentMonth = 'februar';
+        let currentMonth = 'januar';
         
         const data = {
             januar: {
@@ -165,6 +238,7 @@
                 cpa: "236 kr.",
                 ctrBig: "3,25 %",
                 cpcBig: "1,10 kr.",
+                conversionTypes: { calls: 6, websiteClicks: 45, forms: 8 },
                 insights: [
                     { type: 'check', text: '<strong>Stærk Klikrate:</strong> En CTR på 3,25% er solidt for denne type kampagne.' },
                     { type: 'check', text: '<strong>Lav CPC:</strong> Prisen på 1,10 kr. pr. klik giver høj volumen.' },
@@ -175,10 +249,14 @@
                     { title: 'A/B Testing', text: 'Afprøv nye annoncematerialer for at se om CTR kan hæves yderligere.' }
                 ],
                 modalDetails: {
-                    impressions: { icon: 'fa-search', color: 'blue', def: 'Eksponeringer er det antal gange din annonce er blevet vist. Høj volumen betyder stor brand-kendskab i markedet.', insight: 'I januar havde vi ekstremt høj rækkevidde med næsten 400.000 visninger.' },
-                    clicks: { icon: 'fa-mouse-pointer', color: 'yellow', def: 'Klik viser interessen for din annonce. En CTR på 3,25% betyder at 32 ud af 1000 der ser annoncen, klikker på den.', insight: 'Trafikken i januar var meget stabil med over 12.000 besøgende.' },
-                    conversions: { icon: 'fa-shopping-cart', color: 'green', def: 'Hver gang en bruger udfører en ønsket handling (f.eks. kontakt eller køb). Dette er det vigtigste tal for bundlinjen.', insight: 'Konverteringerne lå på et gennemsnit af 2 pr. dag i januar.' },
-                    cost: { icon: 'fa-coins', color: 'red', def: 'Den samlede investering i annoncering. CPC er prisen du betaler i gennemsnit hver gang nogen klikker.', insight: 'Prisen pr. klik på 1,10 kr. er meget favorabel og tillader stor skala.' }
+                    impressions: { icon: 'fa-search', color: 'blue', def: 'Hvor mange gange din annonce er vist.', insight: 'I januar havde vi ekstremt høj rækkevidde med næsten 400.000 visninger.' },
+                    clicks: { icon: 'fa-mouse-pointer', color: 'yellow', def: 'Hvor mange der klikkede på annoncen.', insight: 'Trafikken i januar var meget stabil med over 12.000 besøgende.' },
+                    conversions: { icon: 'fa-shopping-cart', color: 'green', def: 'Det samlede antal værdifulde handlinger.', insight: 'Konverteringerne lå på et gennemsnit af 2 pr. dag i januar.' },
+                    cost: { icon: 'fa-coins', color: 'red', def: 'Den samlede investering i annoncering.', insight: 'Prisen pr. klik på 1,10 kr. er meget favorabel og tillader stor skala.' },
+                    // Conversion Modals
+                    conv_calls: { icon: 'fa-phone-volume', color: 'blue', def: 'Direkte opkald foretaget fra Google Ads annoncen.', insight: 'Dette er en af de mest pålidelige konverteringstyper, da det er en faktiske konvertering, hvor kunden ringer direkte til jer.' },
+                    conv_web: { icon: 'fa-mobile-alt', color: 'indigo', def: 'Klik på telefonnummeret inde på hjemmesiden.', insight: 'Bemærk: Nogle klik kan ske ved en fejl. Erfaringsmæssigt er den reelle konvertering (folk der ringer igennem) ca. 80% af det trackede tal.' },
+                    conv_forms: { icon: 'fa-file-contract', color: 'green', def: 'Indsendelse af kontaktformularer på sitet.', insight: 'Dette er en af de mest pålidelige og ønskede konverteringer, da kunden aktivt har givet sine oplysninger.' }
                 }
             },
             februar: {
@@ -193,6 +271,7 @@
                 cpa: "102 kr.",
                 ctrBig: "2,87 %",
                 cpcBig: "0,84 kr.",
+                conversionTypes: { calls: 3, websiteClicks: 20, forms: 2 },
                 insights: [
                     { type: 'check', text: '<strong>Kraftig CPA Forbedring:</strong> Prisen pr. konvertering er faldet fra 236 kr til 102 kr.' },
                     { type: 'check', text: '<strong>Billigere Klik:</strong> Gennemsnits CPC er faldet til kun 0,84 kr.' },
@@ -202,10 +281,14 @@
                     { title: 'Opskalering', text: 'Da prisen pr. kunde er meget lav (102 kr), bør budgettet øges for at vinde mere volumen.' }
                 ],
                 modalDetails: {
-                    impressions: { icon: 'fa-search', color: 'blue', def: 'Eksponeringer er faldet i februar, hvilket tyder på et mindre budget eller lavere søgevolumen i markedet.', insight: 'Selvom rækkevidden er lavere, er trafikken blevet mere "ren" og konverterer bedre.' },
-                    clicks: { icon: 'fa-mouse-pointer', color: 'yellow', def: 'Klikrate er en anelse lavere end januar, men kvaliteten af klik er højere målt på konverteringsraten.', insight: 'Vi ser færre klik, men de besøgende foretager sig mere på sitet.' },
-                    conversions: { icon: 'fa-shopping-cart', color: 'green', def: 'Dette er månedens succes-historie. Selvom der er færre klik, får vi væsentligt mere for pengene.', insight: 'Konverteringsraten er steget med over 50% sammenlignet med januar.' },
-                    cost: { icon: 'fa-coins', color: 'red', def: 'Det samlede forbrug er lavere, men effektiviteten er rekordhøj med en historisk lav klikpris.', insight: 'Vi betaler nu kun 0,84 kr pr. klik, hvilket er 23% billigere end januar.' }
+                    impressions: { icon: 'fa-search', color: 'blue', def: 'Eksponeringer er faldet i februar, hvilket tyder på et mindre budget.', insight: 'Selvom rækkevidden er lavere, er trafikken blevet mere "ren" og konverterer bedre.' },
+                    clicks: { icon: 'fa-mouse-pointer', color: 'yellow', def: 'Klikrate er en anelse lavere end januar.', insight: 'Vi ser færre klik, men de besøgende foretager sig mere på sitet.' },
+                    conversions: { icon: 'fa-shopping-cart', color: 'green', def: 'Konverteringsraten er steget markant i februar.', insight: 'Konverteringsraten er steget med over 50% sammenlignet med januar.' },
+                    cost: { icon: 'fa-coins', color: 'red', def: 'Det samlede forbrug er lavere, men effektiviteten er høj.', insight: 'Vi betaler nu kun 0,84 kr pr. klik, hvilket er 23% billigere end januar.' },
+                    // Conversion Modals
+                    conv_calls: { icon: 'fa-phone-volume', color: 'blue', def: 'Direkte opkald foretaget fra Google Ads annoncen.', insight: 'Selvom der er færre opkald end januar, er de stadig de mest værdifulde direkte konverteringer.' },
+                    conv_web: { icon: 'fa-mobile-alt', color: 'indigo', def: 'Klik på telefonnummeret inde på hjemmesiden.', insight: 'Husk at fratrække ca. 20% for utilsigtede klik for at få det reelle antal samtaler.' },
+                    conv_forms: { icon: 'fa-file-contract', color: 'green', def: 'Indsendelse af kontaktformularer på sitet.', insight: 'Vi prioriterer altid disse henvendelser højt, da de repræsenterer konkrete kunde-leads.' }
                 }
             }
         };
@@ -226,21 +309,26 @@
                 impressions: 'Eksponeringer',
                 clicks: 'Klik & CTR',
                 conversions: 'Konverteringer',
-                cost: 'Annonceforbrug'
+                cost: 'Annonceforbrug',
+                conv_calls: 'Opkald fra annoncer',
+                conv_web: 'Klik på Tlf. (Sitet)',
+                conv_forms: 'Formular indsendelser'
             };
 
             const colors = {
                 blue: 'bg-blue-100 text-blue-600',
                 yellow: 'bg-yellow-100 text-yellow-600',
                 green: 'bg-green-100 text-green-600',
-                red: 'bg-red-100 text-red-600'
+                red: 'bg-red-100 text-red-600',
+                indigo: 'bg-indigo-100 text-indigo-600'
             };
 
             const barColors = {
                 blue: 'bg-blue-500',
                 yellow: 'bg-yellow-500',
                 green: 'bg-green-500',
-                red: 'bg-red-500'
+                red: 'bg-red-500',
+                indigo: 'bg-indigo-500'
             };
 
             iconContainer.className = `w-16 h-16 rounded-2xl flex items-center justify-center text-2xl mb-6 ${colors[detail.color]}`;
@@ -251,9 +339,12 @@
             
             // Set value
             if(metricType === 'impressions') value.innerText = mData.impressions;
-            if(metricType === 'clicks') value.innerText = mData.clicks;
-            if(metricType === 'conversions') value.innerText = mData.conversions;
-            if(metricType === 'cost') value.innerText = mData.cost;
+            else if(metricType === 'clicks') value.innerText = mData.clicks;
+            else if(metricType === 'conversions') value.innerText = mData.conversions;
+            else if(metricType === 'cost') value.innerText = mData.cost;
+            else if(metricType === 'conv_calls') value.innerText = mData.conversionTypes.calls;
+            else if(metricType === 'conv_web') value.innerText = mData.conversionTypes.websiteClicks;
+            else if(metricType === 'conv_forms') value.innerText = mData.conversionTypes.forms;
 
             bar.className = `h-1 rounded-full ${barColors[detail.color]}`;
             
@@ -282,6 +373,10 @@
             document.getElementById('stat-ctr-big').innerText = m.ctrBig;
             document.getElementById('stat-cpc-big').innerText = m.cpcBig;
 
+            document.getElementById('stat-calls').innerText = m.conversionTypes.calls;
+            document.getElementById('stat-website-clicks').innerText = m.conversionTypes.websiteClicks;
+            document.getElementById('stat-forms').innerText = m.conversionTypes.forms;
+
             const insightsContainer = document.getElementById('insights-list');
             insightsContainer.innerHTML = m.insights.map(i => `
                 <li class="flex items-start">
@@ -305,7 +400,7 @@
             document.getElementById(`tab-${month}`).classList.add('tab-active');
         }
 
-        window.onload = () => switchMonth('februar');
+        window.onload = () => switchMonth('januar');
     </script>
 </body>
 </html>
