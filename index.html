@@ -9,10 +9,34 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
-        .metric-card { transition: all 0.2s ease; cursor: pointer; }
-        .metric-card:hover { transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
         
-        /* Forbedret tab-markering */
+        /* Forstærket interaktivitet for kort */
+        .metric-card { 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            cursor: pointer; 
+            position: relative;
+            border: 1px solid #e2e8f0;
+        }
+        .metric-card:hover { 
+            transform: translateY(-6px); 
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); 
+            border-color: #3b82f6;
+        }
+        .metric-card:active {
+            transform: translateY(-2px) scale(0.98);
+        }
+
+        /* "Se detaljer" hint er nu synligt hele tiden, men bliver tydeligere ved hover */
+        .click-hint {
+            opacity: 0.8;
+            transition: all 0.3s ease;
+        }
+        .metric-card:hover .click-hint {
+            opacity: 1;
+            color: #1e40af;
+        }
+        
+        /* Tab-markering */
         .tab-button { border-bottom: 3px solid transparent; transition: all 0.3s ease; }
         .tab-active { 
             border-bottom: 3px solid #1e40af; 
@@ -46,7 +70,7 @@
                 </div>
                 <div class="bg-indigo-800/50 p-4 rounded-xl border border-indigo-700/50">
                     <p class="font-bold text-xs uppercase tracking-wider text-indigo-300 mb-1">Interaktivitet</p>
-                    <p class="text-indigo-100 text-xs">Klik på <strong>alle</strong> farvede bokse (både KPI'er og Konverteringstyper) for at få dybere indsigt.</p>
+                    <p class="text-indigo-100 text-xs">Klik på <strong>alle</strong> kasser med blå kant eller farvet venstre-streg for at åbne detaljeret info.</p>
                 </div>
                 <div class="bg-indigo-800/50 p-4 rounded-xl border border-indigo-700/50">
                     <p class="font-bold text-xs uppercase tracking-wider text-indigo-300 mb-1">Datagrundlag</p>
@@ -60,9 +84,9 @@
             <div>
                 <h1 class="text-2xl font-bold text-gray-800">Performance Rapport</h1>
                 <p class="text-gray-500 font-medium">HH Gruppen ApS | Google Ads</p>
-            </div>
-            <div class="mt-4 md:mt-0 text-right text-gray-400 text-xs italic">
-                Klik på boksene for detaljeret info
+                <p class="text-blue-600 text-xs font-bold mt-2 flex items-center">
+                    <i class="fas fa-mouse-pointer mr-2 animate-pulse"></i> Klik på boksene for mere info
+                </p>
             </div>
             <div class="mt-4 md:mt-0 text-right">
                 <span class="bg-blue-50 text-blue-600 px-4 py-2 rounded-full text-sm font-semibold" id="dateRangeDisplay">
@@ -83,25 +107,25 @@
 
         <!-- KPI Grid -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <div onclick="openModal('impressions')" class="metric-card bg-white p-6 rounded-2xl shadow-sm border-l-4 border-blue-500">
-                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 flex justify-between">Eksponeringer <i class="fas fa-search-plus text-[10px] mt-1 opacity-40"></i></p>
+            <div onclick="openModal('impressions')" class="metric-card bg-white p-6 rounded-2xl shadow-sm border-l-4 border-blue-500 group">
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 flex justify-between">Eksponeringer <i class="fas fa-expand-alt text-[10px] mt-1 opacity-20 group-hover:opacity-100 transition-opacity"></i></p>
                 <h3 class="text-2xl font-bold text-gray-800" id="stat-impressions">389 t</h3>
-                <p class="text-blue-500 text-sm mt-2 font-medium">Rækkevidde</p>
+                <p class="text-blue-500 text-[10px] mt-3 font-bold click-hint uppercase tracking-tight">Se detaljer <i class="fas fa-chevron-right ml-1"></i></p>
             </div>
-            <div onclick="openModal('clicks')" class="metric-card bg-white p-6 rounded-2xl shadow-sm border-l-4 border-yellow-500">
-                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 flex justify-between">Klik <i class="fas fa-mouse-pointer text-[10px] mt-1 opacity-40"></i></p>
+            <div onclick="openModal('clicks')" class="metric-card bg-white p-6 rounded-2xl shadow-sm border-l-4 border-yellow-500 group">
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 flex justify-between">Klik <i class="fas fa-expand-alt text-[10px] mt-1 opacity-20 group-hover:opacity-100 transition-opacity"></i></p>
                 <h3 class="text-2xl font-bold text-gray-800" id="stat-clicks">12,6 t</h3>
-                <p class="text-yellow-600 text-sm mt-2 font-medium" id="stat-ctr">CTR: 3,25%</p>
+                <p class="text-yellow-600 text-[10px] mt-3 font-bold click-hint uppercase tracking-tight" id="stat-ctr">CTR: 3,25%</p>
             </div>
-            <div onclick="openModal('conversions')" class="metric-card bg-white p-6 rounded-2xl shadow-sm border-l-4 border-green-500">
-                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 flex justify-between">Konverteringer <i class="fas fa-shopping-cart text-[10px] mt-1 opacity-40"></i></p>
+            <div onclick="openModal('conversions')" class="metric-card bg-white p-6 rounded-2xl shadow-sm border-l-4 border-green-500 group">
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 flex justify-between">Konverteringer <i class="fas fa-expand-alt text-[10px] mt-1 opacity-20 group-hover:opacity-100 transition-opacity"></i></p>
                 <h3 class="text-2xl font-bold text-gray-800" id="stat-conversions">59,00</h3>
-                <p class="text-green-600 text-sm mt-2 font-medium" id="stat-conv-rate">Rate: 0,47%</p>
+                <p class="text-green-600 text-[10px] mt-3 font-bold click-hint uppercase tracking-tight" id="stat-conv-rate">Rate: 0,47%</p>
             </div>
-            <div onclick="openModal('cost')" class="metric-card bg-white p-6 rounded-2xl shadow-sm border-l-4 border-red-500">
-                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 flex justify-between">Samlet Pris <i class="fas fa-coins text-[10px] mt-1 opacity-40"></i></p>
+            <div onclick="openModal('cost')" class="metric-card bg-white p-6 rounded-2xl shadow-sm border-l-4 border-red-500 group">
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 flex justify-between">Samlet Pris <i class="fas fa-expand-alt text-[10px] mt-1 opacity-20 group-hover:opacity-100 transition-opacity"></i></p>
                 <h3 class="text-2xl font-bold text-gray-800" id="stat-cost">13,9 t kr.</h3>
-                <p class="text-red-600 text-sm mt-2 font-medium" id="stat-cpc">Gns. CPC: 1,10 kr.</p>
+                <p class="text-red-600 text-[10px] mt-3 font-bold click-hint uppercase tracking-tight" id="stat-cpc">Gns. CPC: 1,10 kr.</p>
             </div>
         </div>
 
@@ -130,35 +154,40 @@
         <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 mb-8">
             <h4 class="text-center text-lg font-bold text-gray-800 mb-8 uppercase tracking-widest text-sm">Konverteringstyper</h4>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div onclick="openModal('conv_calls')" class="metric-card flex items-center p-4 bg-blue-50 rounded-2xl border border-blue-100">
-                    <div class="w-12 h-12 bg-blue-500 text-white rounded-xl flex items-center justify-center text-xl mr-4">
+                <div onclick="openModal('conv_calls')" class="metric-card flex items-center p-5 bg-blue-50 rounded-2xl border border-blue-100 group">
+                    <div class="w-12 h-12 bg-blue-500 text-white rounded-xl flex items-center justify-center text-xl mr-4 shadow-sm group-hover:scale-110 transition-transform">
                         <i class="fas fa-phone-volume"></i>
                     </div>
                     <div class="flex-1">
-                        <p class="text-xs font-bold text-blue-600 uppercase tracking-wide flex justify-between">Opkald <i class="fas fa-info-circle opacity-30 text-[10px]"></i></p>
+                        <p class="text-xs font-bold text-blue-600 uppercase tracking-wide flex justify-between">Opkald <i class="fas fa-plus-circle opacity-30 text-[10px] group-hover:opacity-100"></i></p>
                         <p class="text-2xl font-bold text-gray-800" id="stat-calls">6</p>
+                        <p class="text-[10px] text-blue-600 mt-1 font-bold click-hint uppercase tracking-tight">Klik for analyse</p>
                     </div>
                 </div>
-                <div onclick="openModal('conv_web')" class="metric-card flex items-center p-4 bg-indigo-50 rounded-2xl border border-indigo-100">
-                    <div class="w-12 h-12 bg-indigo-500 text-white rounded-xl flex items-center justify-center text-xl mr-4">
+                <div onclick="openModal('conv_web')" class="metric-card flex items-center p-5 bg-indigo-50 rounded-2xl border border-indigo-100 group">
+                    <div class="w-12 h-12 bg-indigo-500 text-white rounded-xl flex items-center justify-center text-xl mr-4 shadow-sm group-hover:scale-110 transition-transform">
                         <i class="fas fa-mobile-alt"></i>
                     </div>
                     <div class="flex-1">
-                        <p class="text-xs font-bold text-indigo-600 uppercase tracking-wide flex justify-between">Hjemmeside klik <i class="fas fa-info-circle opacity-30 text-[10px]"></i></p>
+                        <p class="text-xs font-bold text-indigo-600 uppercase tracking-wide flex justify-between">Hjemmeside klik <i class="fas fa-plus-circle opacity-30 text-[10px] group-hover:opacity-100"></i></p>
                         <p class="text-2xl font-bold text-gray-800" id="stat-website-clicks">45</p>
+                        <p class="text-[10px] text-indigo-600 mt-1 font-bold click-hint uppercase tracking-tight">Klik for analyse</p>
                     </div>
                 </div>
-                <div onclick="openModal('conv_forms')" class="metric-card flex items-center p-4 bg-green-50 rounded-2xl border border-green-100">
-                    <div class="w-12 h-12 bg-green-500 text-white rounded-xl flex items-center justify-center text-xl mr-4">
+                <div onclick="openModal('conv_forms')" class="metric-card flex items-center p-5 bg-green-50 rounded-2xl border border-green-100 group">
+                    <div class="w-12 h-12 bg-green-500 text-white rounded-xl flex items-center justify-center text-xl mr-4 shadow-sm group-hover:scale-110 transition-transform">
                         <i class="fas fa-file-contract"></i>
                     </div>
                     <div class="flex-1">
-                        <p class="text-xs font-bold text-green-600 uppercase tracking-wide flex justify-between">Formularer <i class="fas fa-info-circle opacity-30 text-[10px]"></i></p>
+                        <p class="text-xs font-bold text-green-600 uppercase tracking-wide flex justify-between">Formularer <i class="fas fa-plus-circle opacity-30 text-[10px] group-hover:opacity-100"></i></p>
                         <p class="text-2xl font-bold text-gray-800" id="stat-forms">8</p>
+                        <p class="text-[10px] text-green-600 mt-1 font-bold click-hint uppercase tracking-tight">Klik for analyse</p>
                     </div>
                 </div>
             </div>
-            <p class="text-center text-[10px] text-gray-400 mt-6 italic">Klik på kasserne ovenfor for detaljeret info om de enkelte konverteringer.</p>
+            <p class="text-center text-[11px] text-gray-400 mt-8 font-bold uppercase tracking-widest bg-gray-50 py-2 rounded-full border border-gray-100">
+                <i class="fas fa-mouse-pointer mr-2 text-blue-500"></i> Klik på kasserne for at åbne detaljeret viden
+            </p>
         </div>
 
         <!-- Insights & Recommendations -->
@@ -217,7 +246,7 @@
             </div>
 
             <button onclick="closeModal(event)" class="w-full mt-6 bg-gray-800 text-white font-bold py-4 rounded-xl hover:bg-gray-900 transition-colors">
-                Forstået
+                Luk vindue
             </button>
         </div>
     </div>
