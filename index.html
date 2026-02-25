@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Performance Rapport - HH Gruppen ApS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .metric-card { transition: all 0.2s ease; cursor: pointer; }
+        .metric-card:hover { transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .tab-active { border-bottom: 3px solid #3b82f6; color: #1e40af; }
+        
+        /* Modal Animation */
+        .modal-overlay { transition: opacity 0.3s ease; }
+        .modal-content { transition: transform 0.3s ease; }
+        .hidden-modal { opacity: 0; pointer-events: none; }
+        .hidden-modal .modal-content { transform: scale(0.95); }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-5xl mx-auto">
+        <!-- Header -->
+        <header class="bg-white rounded-t-2xl shadow-sm p-6 border-x border-t border-gray-100 flex flex-col md:flex-row justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800">Performance Rapport</h1>
+                <p class="text-gray-500 font-medium">HH Gruppen ApS | Google Ads</p>
+            </div>
+            <div class="mt-4 md:mt-0 text-right text-gray-400 text-xs italic">
+                Klik på boksene for detaljeret info
+            </div>
+            <div class="mt-4 md:mt-0 text-right">
+                <span class="bg-blue-50 text-blue-600 px-4 py-2 rounded-full text-sm font-semibold" id="dateRangeDisplay">
+                    <i class="far fa-calendar-alt mr-2"></i>1. feb 2026 - 28. feb 2026
+                </span>
+            </div>
+        </header>
+
+        <!-- Month Navigation -->
+        <nav class="bg-white border-x border-b border-gray-100 rounded-b-2xl shadow-sm mb-8 flex overflow-x-auto">
+            <button onclick="switchMonth('januar')" id="tab-januar" class="px-8 py-4 font-bold text-gray-400 hover:text-gray-600 transition-all border-b-3 border-transparent">
+                JANUAR
+            </button>
+            <button onclick="switchMonth('februar')" id="tab-februar" class="px-8 py-4 font-bold text-gray-400 hover:text-gray-600 transition-all border-b-3 border-transparent tab-active">
+                FEBRUAR
+            </button>
+        </nav>
+
+        <!-- KPI Grid -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div onclick="openModal('impressions')" class="metric-card bg-white p-6 rounded-2xl shadow-sm border-l-4 border-blue-500">
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 flex justify-between">Eksponeringer <i class="fas fa-search-plus text-[10px] mt-1 opacity-40"></i></p>
+                <h3 class="text-2xl font-bold text-gray-800" id="stat-impressions">106 t</h3>
+                <p class="text-blue-500 text-sm mt-2 font-medium">Rækkevidde</p>
+            </div>
+            <div onclick="openModal('clicks')" class="metric-card bg-white p-6 rounded-2xl shadow-sm border-l-4 border-yellow-500">
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 flex justify-between">Klik <i class="fas fa-mouse-pointer text-[10px] mt-1 opacity-40"></i></p>
+                <h3 class="text-2xl font-bold text-gray-800" id="stat-clicks">3,05 t</h3>
+                <p class="text-yellow-600 text-sm mt-2 font-medium" id="stat-ctr">CTR: 2,87%</p>
+            </div>
+            <div onclick="openModal('conversions')" class="metric-card bg-white p-6 rounded-2xl shadow-sm border-l-4 border-green-500">
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 flex justify-between">Konverteringer <i class="fas fa-shopping-cart text-[10px] mt-1 opacity-40"></i></p>
+                <h3 class="text-2xl font-bold text-gray-800" id="stat-conversions">25,00</h3>
+                <p class="text-green-600 text-sm mt-2 font-medium" id="stat-conv-rate">Rate: 0,72%</p>
+            </div>
+            <div onclick="openModal('cost')" class="metric-card bg-white p-6 rounded-2xl shadow-sm border-l-4 border-red-500">
+                <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 flex justify-between">Samlet Pris <i class="fas fa-coins text-[10px] mt-1 opacity-40"></i></p>
+                <h3 class="text-2xl font-bold text-gray-800" id="stat-cost">2,56 t kr.</h3>
+                <p class="text-red-600 text-sm mt-2 font-medium" id="stat-cpc">Gns. CPC: 0,84 kr.</p>
+            </div>
+        </div>
+
+        <!-- Efficiency Section -->
+        <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 mb-8 text-center">
+            <h4 class="text-lg font-bold text-gray-800 mb-6 uppercase tracking-widest text-sm">Effektivitets Nøgletal</h4>
+            <div class="flex flex-col md:flex-row justify-around gap-8">
+                <div>
+                    <p class="text-gray-500 text-sm mb-1">Pris pr. konvertering</p>
+                    <p class="text-3xl font-bold text-gray-800" id="stat-cpa">102 kr.</p>
+                </div>
+                <div class="hidden md:block w-px bg-gray-100"></div>
+                <div>
+                    <p class="text-gray-500 text-sm mb-1">Klikrate (CTR)</p>
+                    <p class="text-3xl font-bold text-gray-800" id="stat-ctr-big">2,87 %</p>
+                </div>
+                <div class="hidden md:block w-px bg-gray-100"></div>
+                <div>
+                    <p class="text-gray-500 text-sm mb-1">Gns. CPC</p>
+                    <p class="text-3xl font-bold text-gray-800" id="stat-cpc-big">0,84 kr.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Insights & Recommendations -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+                <h4 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+                    <i class="fas fa-lightbulb text-yellow-500 mr-3"></i>Vigtigste Indsigter
+                </h4>
+                <ul class="space-y-4" id="insights-list"></ul>
+            </div>
+
+            <div class="bg-gray-800 text-white p-8 rounded-2xl shadow-sm">
+                <h4 class="text-xl font-bold mb-6 flex items-center">
+                    <i class="fas fa-rocket text-blue-400 mr-3"></i>Anbefalinger
+                </h4>
+                <div class="space-y-6" id="recommendations-list"></div>
+            </div>
+        </div>
+
+        <footer class="mt-12 pb-8 text-center text-gray-400 text-sm">
+            <p>&copy; 2026 HH Gruppen ApS Performance Rapport | Genereret baseret på Google Ads data</p>
+        </footer>
+    </div>
+
+    <!-- Global Modal Overlay -->
+    <div id="modalOverlay" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 modal-overlay hidden-modal" onclick="closeModal(event)">
+        <div class="bg-white rounded-3xl max-w-lg w-full shadow-2xl modal-content p-8 relative" onclick="event.stopPropagation()">
+            <button onclick="closeModal(event)" class="absolute top-6 right-6 text-gray-400 hover:text-gray-600">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+            
+            <div id="modalIconContainer" class="w-16 h-16 rounded-2xl flex items-center justify-center text-2xl mb-6"></div>
+            
+            <h2 id="modalTitle" class="text-2xl font-bold text-gray-800 mb-2"></h2>
+            <p id="modalDefinition" class="text-gray-500 text-sm leading-relaxed mb-6"></p>
+            
+            <div class="bg-gray-50 rounded-2xl p-6 mb-6">
+                <div class="flex justify-between items-end mb-4">
+                    <p class="text-xs font-bold text-gray-400 uppercase">Status denne måned</p>
+                    <p id="modalValue" class="text-3xl font-bold text-gray-800"></p>
+                </div>
+                <div class="h-1 w-full bg-gray-200 rounded-full">
+                    <div id="modalBar" class="h-1 rounded-full bg-blue-500" style="width: 70%"></div>
+                </div>
+            </div>
+            
+            <div class="space-y-4">
+                <h4 class="font-bold text-gray-800 text-sm uppercase tracking-wide">Indsigt</h4>
+                <p id="modalInsight" class="text-gray-600 text-sm leading-relaxed italic border-l-4 border-blue-500 pl-4"></p>
+            </div>
+
+            <button onclick="closeModal(event)" class="w-full mt-8 bg-gray-800 text-white font-bold py-4 rounded-xl hover:bg-gray-900 transition-colors">
+                Forstået
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let currentMonth = 'februar';
+        
+        const data = {
+            januar: {
+                dateRange: "1. jan 2026 - 31. jan 2026",
+                impressions: "389 t",
+                clicks: "12,6 t",
+                ctr: "3,25%",
+                conversions: "59,00",
+                convRate: "0,47%",
+                cost: "13,9 t kr.",
+                cpc: "1,10 kr.",
+                cpa: "236 kr.",
+                ctrBig: "3,25 %",
+                cpcBig: "1,10 kr.",
+                insights: [
+                    { type: 'check', text: '<strong>Stærk Klikrate:</strong> En CTR på 3,25% er solidt for denne type kampagne.' },
+                    { type: 'check', text: '<strong>Lav CPC:</strong> Prisen på 1,10 kr. pr. klik giver høj volumen.' },
+                    { type: 'info', text: '<strong>Konverteringspotentiale:</strong> Kun få klik bliver til handlinger (0,47%).' }
+                ],
+                recommendations: [
+                    { title: 'Optimer Landingssider', text: 'Fokusér på at øge relevansen på siden for at hæve konverteringsraten.' },
+                    { title: 'A/B Testing', text: 'Afprøv nye annoncematerialer for at se om CTR kan hæves yderligere.' }
+                ],
+                modalDetails: {
+                    impressions: { icon: 'fa-search', color: 'blue', def: 'Eksponeringer er det antal gange din annonce er blevet vist. Høj volumen betyder stor brand-kendskab i markedet.', insight: 'I januar havde vi ekstremt høj rækkevidde med næsten 400.000 visninger.' },
+                    clicks: { icon: 'fa-mouse-pointer', color: 'yellow', def: 'Klik viser interessen for din annonce. En CTR på 3,25% betyder at 32 ud af 1000 der ser annoncen, klikker på den.', insight: 'Trafikken i januar var meget stabil med over 12.000 besøgende.' },
+                    conversions: { icon: 'fa-shopping-cart', color: 'green', def: 'Hver gang en bruger udfører en ønsket handling (f.eks. kontakt eller køb). Dette er det vigtigste tal for bundlinjen.', insight: 'Konverteringerne lå på et gennemsnit af 2 pr. dag i januar.' },
+                    cost: { icon: 'fa-coins', color: 'red', def: 'Den samlede investering i annoncering. CPC er prisen du betaler i gennemsnit hver gang nogen klikker.', insight: 'Prisen pr. klik på 1,10 kr. er meget favorabel og tillader stor skala.' }
+                }
+            },
+            februar: {
+                dateRange: "1. feb 2026 - 28. feb 2026",
+                impressions: "106 t",
+                clicks: "3,05 t",
+                ctr: "2,87%",
+                conversions: "25,00",
+                convRate: "0,72%",
+                cost: "2,56 t kr.",
+                cpc: "0,84 kr.",
+                cpa: "102 kr.",
+                ctrBig: "2,87 %",
+                cpcBig: "0,84 kr.",
+                insights: [
+                    { type: 'check', text: '<strong>Kraftig CPA Forbedring:</strong> Prisen pr. konvertering er faldet fra 236 kr til 102 kr.' },
+                    { type: 'check', text: '<strong>Billigere Klik:</strong> Gennemsnits CPC er faldet til kun 0,84 kr.' },
+                    { type: 'info', text: '<strong>Højere Rate:</strong> Konverteringsraten er steget til 0,72%.' }
+                ],
+                recommendations: [
+                    { title: 'Opskalering', text: 'Da prisen pr. kunde er meget lav (102 kr), bør budgettet øges for at vinde mere volumen.' }
+                ],
+                modalDetails: {
+                    impressions: { icon: 'fa-search', color: 'blue', def: 'Eksponeringer er faldet i februar, hvilket tyder på et mindre budget eller lavere søgevolumen i markedet.', insight: 'Selvom rækkevidden er lavere, er trafikken blevet mere "ren" og konverterer bedre.' },
+                    clicks: { icon: 'fa-mouse-pointer', color: 'yellow', def: 'Klikrate er en anelse lavere end januar, men kvaliteten af klik er højere målt på konverteringsraten.', insight: 'Vi ser færre klik, men de besøgende foretager sig mere på sitet.' },
+                    conversions: { icon: 'fa-shopping-cart', color: 'green', def: 'Dette er månedens succes-historie. Selvom der er færre klik, får vi væsentligt mere for pengene.', insight: 'Konverteringsraten er steget med over 50% sammenlignet med januar.' },
+                    cost: { icon: 'fa-coins', color: 'red', def: 'Det samlede forbrug er lavere, men effektiviteten er rekordhøj med en historisk lav klikpris.', insight: 'Vi betaler nu kun 0,84 kr pr. klik, hvilket er 23% billigere end januar.' }
+                }
+            }
+        };
+
+        function openModal(metricType) {
+            const mData = data[currentMonth];
+            const detail = mData.modalDetails[metricType];
+            
+            const overlay = document.getElementById('modalOverlay');
+            const iconContainer = document.getElementById('modalIconContainer');
+            const title = document.getElementById('modalTitle');
+            const def = document.getElementById('modalDefinition');
+            const value = document.getElementById('modalValue');
+            const insight = document.getElementById('modalInsight');
+            const bar = document.getElementById('modalBar');
+
+            const titles = {
+                impressions: 'Eksponeringer',
+                clicks: 'Klik & CTR',
+                conversions: 'Konverteringer',
+                cost: 'Annonceforbrug'
+            };
+
+            const colors = {
+                blue: 'bg-blue-100 text-blue-600',
+                yellow: 'bg-yellow-100 text-yellow-600',
+                green: 'bg-green-100 text-green-600',
+                red: 'bg-red-100 text-red-600'
+            };
+
+            const barColors = {
+                blue: 'bg-blue-500',
+                yellow: 'bg-yellow-500',
+                green: 'bg-green-500',
+                red: 'bg-red-500'
+            };
+
+            iconContainer.className = `w-16 h-16 rounded-2xl flex items-center justify-center text-2xl mb-6 ${colors[detail.color]}`;
+            iconContainer.innerHTML = `<i class="fas ${detail.icon}"></i>`;
+            title.innerText = titles[metricType];
+            def.innerText = detail.def;
+            insight.innerText = detail.insight;
+            
+            // Set value
+            if(metricType === 'impressions') value.innerText = mData.impressions;
+            if(metricType === 'clicks') value.innerText = mData.clicks;
+            if(metricType === 'conversions') value.innerText = mData.conversions;
+            if(metricType === 'cost') value.innerText = mData.cost;
+
+            bar.className = `h-1 rounded-full ${barColors[detail.color]}`;
+            
+            overlay.classList.remove('hidden-modal');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(e) {
+            document.getElementById('modalOverlay').classList.add('hidden-modal');
+            document.body.style.overflow = 'auto';
+        }
+
+        function switchMonth(month) {
+            currentMonth = month;
+            const m = data[month];
+            
+            document.getElementById('dateRangeDisplay').innerHTML = `<i class="far fa-calendar-alt mr-2"></i>${m.dateRange}`;
+            document.getElementById('stat-impressions').innerText = m.impressions;
+            document.getElementById('stat-clicks').innerText = m.clicks;
+            document.getElementById('stat-ctr').innerText = `CTR: ${m.ctr}`;
+            document.getElementById('stat-conversions').innerText = m.conversions;
+            document.getElementById('stat-conv-rate').innerText = `Rate: ${m.convRate}`;
+            document.getElementById('stat-cost').innerText = m.cost;
+            document.getElementById('stat-cpc').innerText = `Gns. CPC: ${m.cpc}`;
+            document.getElementById('stat-cpa').innerText = m.cpa;
+            document.getElementById('stat-ctr-big').innerText = m.ctrBig;
+            document.getElementById('stat-cpc-big').innerText = m.cpcBig;
+
+            const insightsContainer = document.getElementById('insights-list');
+            insightsContainer.innerHTML = m.insights.map(i => `
+                <li class="flex items-start">
+                    <span class="bg-${i.type === 'check' ? 'blue' : 'orange'}-100 text-${i.type === 'check' ? 'blue' : 'orange'}-600 rounded-full p-1 mr-3 mt-1">
+                        <i class="fas fa-${i.type === 'check' ? 'check' : 'info'} text-[10px]"></i>
+                    </span>
+                    <p class="text-gray-600 text-sm leading-relaxed">${i.text}</p>
+                </li>
+            `).join('');
+
+            const recContainer = document.getElementById('recommendations-list');
+            recContainer.innerHTML = m.recommendations.map(r => `
+                <div class="border-l-2 border-${r.title === 'Opskalering' ? 'green' : 'blue'}-400 pl-4 py-1">
+                    <p class="font-semibold text-${r.title === 'Opskalering' ? 'green' : 'blue'}-400 text-sm uppercase mb-1">${r.title}</p>
+                    <p class="text-gray-300 text-sm">${r.text}</p>
+                </div>
+            `).join('');
+
+            document.getElementById('tab-januar').classList.remove('tab-active');
+            document.getElementById('tab-februar').classList.remove('tab-active');
+            document.getElementById(`tab-${month}`).classList.add('tab-active');
+        }
+
+        window.onload = () => switchMonth('februar');
+    </script>
+</body>
+</html>
