@@ -70,24 +70,24 @@
                     Se Rådata
                 </a>
                 <span class="bg-blue-50 text-blue-600 px-4 py-2 rounded-full text-sm font-semibold" id="dateRangeDisplay">
-                    <i class="far fa-calendar-alt mr-2"></i>1. nov 2025 - 30. nov 2025
+                    <i class="far fa-calendar-alt mr-2"></i>1. feb 2026 - 28. feb 2026
                 </span>
             </div>
         </header>
 
-        <!-- Month Navigation -->
+        <!-- Month Navigation (Updated Order) -->
         <nav class="bg-white border-x border-b border-gray-100 rounded-b-2xl shadow-sm mb-8 flex overflow-x-auto">
-            <button onclick="switchMonth('november')" id="tab-november" class="tab-button px-6 md:px-10 py-4 font-bold text-gray-400 hover:text-gray-600 transition-all tab-active">
-                NOVEMBER
-            </button>
-            <button onclick="switchMonth('december')" id="tab-december" class="tab-button px-6 md:px-10 py-4 font-bold text-gray-400 hover:text-gray-600 transition-all">
-                DECEMBER
+            <button onclick="switchMonth('februar')" id="tab-februar" class="tab-button px-6 md:px-10 py-4 font-bold text-gray-400 hover:text-gray-600 transition-all tab-active">
+                FEBRUAR
             </button>
             <button onclick="switchMonth('januar')" id="tab-januar" class="tab-button px-6 md:px-10 py-4 font-bold text-gray-400 hover:text-gray-600 transition-all">
                 JANUAR
             </button>
-            <button onclick="switchMonth('februar')" id="tab-februar" class="tab-button px-6 md:px-10 py-4 font-bold text-gray-400 hover:text-gray-600 transition-all">
-                FEBRUAR
+            <button onclick="switchMonth('december')" id="tab-december" class="tab-button px-6 md:px-10 py-4 font-bold text-gray-400 hover:text-gray-600 transition-all">
+                DECEMBER
+            </button>
+            <button onclick="switchMonth('november')" id="tab-november" class="tab-button px-6 md:px-10 py-4 font-bold text-gray-400 hover:text-gray-600 transition-all">
+                NOVEMBER
             </button>
         </nav>
 
@@ -96,7 +96,7 @@
             <div onclick="openModal('impressions')" class="metric-card bg-white p-6 rounded-2xl shadow-sm border-l-4 border-blue-500 group">
                 <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 flex justify-between">Eksponeringer <i class="fas fa-expand-alt text-[10px] mt-1 opacity-20 group-hover:opacity-100 transition-opacity"></i></p>
                 <div class="flex items-baseline gap-2">
-                    <h3 class="text-2xl font-bold text-gray-800" id="stat-impressions">30.177</h3>
+                    <h3 class="text-2xl font-bold text-gray-800" id="stat-impressions">106.368</h3>
                     <span id="change-impressions" class="change-badge"></span>
                 </div>
                 <p class="text-blue-500 text-[10px] mt-3 font-bold uppercase tracking-tight">Se detaljer <i class="fas fa-chevron-right ml-1"></i></p>
@@ -104,26 +104,26 @@
             <div onclick="openModal('clicks')" class="metric-card bg-white p-6 rounded-2xl shadow-sm border-l-4 border-yellow-500 group">
                 <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 flex justify-between">Klik <i class="fas fa-expand-alt text-[10px] mt-1 opacity-20 group-hover:opacity-100 transition-opacity"></i></p>
                 <div class="flex items-baseline gap-2">
-                    <h3 class="text-2xl font-bold text-gray-800" id="stat-clicks">361</h3>
+                    <h3 class="text-2xl font-bold text-gray-800" id="stat-clicks">3.053</h3>
                     <span id="change-clicks" class="change-badge"></span>
                 </div>
-                <p class="text-yellow-600 text-[10px] mt-3 font-bold uppercase tracking-tight" id="stat-ctr">CTR: 1,20%</p>
+                <p class="text-yellow-600 text-[10px] mt-3 font-bold uppercase tracking-tight" id="stat-ctr">CTR: 2,87%</p>
             </div>
             <div onclick="openModal('conversions')" class="metric-card bg-white p-6 rounded-2xl shadow-sm border-l-4 border-green-500 group">
                 <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 flex justify-between">Konverteringer <i class="fas fa-expand-alt text-[10px] mt-1 opacity-20 group-hover:opacity-100 transition-opacity"></i></p>
                 <div class="flex items-baseline gap-2">
-                    <h3 class="text-2xl font-bold text-gray-800" id="stat-conversions">9</h3>
+                    <h3 class="text-2xl font-bold text-gray-800" id="stat-conversions">25</h3>
                     <span id="change-conversions" class="change-badge"></span>
                 </div>
-                <p class="text-green-600 text-[10px] mt-3 font-bold uppercase tracking-tight" id="stat-conv-rate">Rate: 2,31%</p>
+                <p class="text-green-600 text-[10px] mt-3 font-bold uppercase tracking-tight" id="stat-conv-rate">Rate: 0,72%</p>
             </div>
             <div onclick="openModal('cost')" class="metric-card bg-white p-6 rounded-2xl shadow-sm border-l-4 border-red-500 group">
                 <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 flex justify-between">Samlet Pris <i class="fas fa-expand-alt text-[10px] mt-1 opacity-20 group-hover:opacity-100 transition-opacity"></i></p>
                 <div class="flex items-baseline gap-2">
-                    <h3 class="text-2xl font-bold text-gray-800" id="stat-cost">1.255,03 kr.</h3>
+                    <h3 class="text-2xl font-bold text-gray-800" id="stat-cost">2.556,50 kr.</h3>
                     <span id="change-cost" class="change-badge"></span>
                 </div>
-                <p class="text-red-600 text-[10px] mt-3 font-bold uppercase tracking-tight" id="stat-cpc">Gns. CPC: 3,48 kr.</p>
+                <p class="text-red-600 text-[10px] mt-3 font-bold uppercase tracking-tight" id="stat-cpc">Gns. CPC: 0,84 kr.</p>
             </div>
         </div>
 
@@ -134,7 +134,7 @@
                 <div onclick="openModal('cpa')" class="cursor-pointer group">
                     <p class="text-gray-500 text-sm mb-1 group-hover:text-blue-600 transition-colors">Pris pr. konvertering <i class="fas fa-expand-alt text-[8px] opacity-0 group-hover:opacity-100"></i></p>
                     <div class="flex flex-col items-center">
-                        <p class="text-3xl font-bold text-gray-800" id="stat-cpa">139,45 kr.</p>
+                        <p class="text-3xl font-bold text-gray-800" id="stat-cpa">102,26 kr.</p>
                         <span id="change-cpa" class="change-badge mt-1"></span>
                     </div>
                 </div>
@@ -142,7 +142,7 @@
                 <div onclick="openModal('ctr')" class="cursor-pointer group">
                     <p class="text-gray-500 text-sm mb-1 group-hover:text-blue-600 transition-colors">Klikrate (CTR) <i class="fas fa-expand-alt text-[8px] opacity-0 group-hover:opacity-100"></i></p>
                     <div class="flex flex-col items-center">
-                        <p class="text-3xl font-bold text-gray-800" id="stat-ctr-big">1,20 %</p>
+                        <p class="text-3xl font-bold text-gray-800" id="stat-ctr-big">2,87 %</p>
                         <span id="change-ctr" class="change-badge mt-1"></span>
                     </div>
                 </div>
@@ -150,7 +150,7 @@
                 <div onclick="openModal('cpc')" class="cursor-pointer group">
                     <p class="text-gray-500 text-sm mb-1 group-hover:text-blue-600 transition-colors">Gns. CPC <i class="fas fa-expand-alt text-[8px] opacity-0 group-hover:opacity-100"></i></p>
                     <div class="flex flex-col items-center">
-                        <p class="text-3xl font-bold text-gray-800" id="stat-cpc-big">3,48 kr.</p>
+                        <p class="text-3xl font-bold text-gray-800" id="stat-cpc-big">0,84 kr.</p>
                         <span id="change-cpc-evol" class="change-badge mt-1"></span>
                     </div>
                 </div>
@@ -167,7 +167,7 @@
                     </div>
                     <div class="flex-1">
                         <p class="text-xs font-bold text-blue-600 uppercase tracking-wide flex justify-between">Opkald <i class="fas fa-plus-circle opacity-30 text-[10px] group-hover:opacity-100"></i></p>
-                        <p class="text-2xl font-bold text-gray-800" id="stat-calls">7</p>
+                        <p class="text-2xl font-bold text-gray-800" id="stat-calls">21</p>
                     </div>
                 </div>
                 <div onclick="openModal('conv_web')" class="metric-card flex items-center p-5 bg-indigo-50 rounded-2xl border border-indigo-100 group">
@@ -176,7 +176,7 @@
                     </div>
                     <div class="flex-1">
                         <p class="text-xs font-bold text-indigo-600 uppercase tracking-wide flex justify-between">E-mail Klik <i class="fas fa-plus-circle opacity-30 text-[10px] group-hover:opacity-100"></i></p>
-                        <p class="text-2xl font-bold text-gray-800" id="stat-website-clicks">2</p>
+                        <p class="text-2xl font-bold text-gray-800" id="stat-website-clicks">5</p>
                     </div>
                 </div>
                 <div onclick="openModal('conv_forms')" class="metric-card flex items-center p-5 bg-green-50 rounded-2xl border border-green-100 group">
@@ -185,7 +185,7 @@
                     </div>
                     <div class="flex-1">
                         <p class="text-xs font-bold text-green-600 uppercase tracking-wide flex justify-between">Formularer <i class="fas fa-plus-circle opacity-30 text-[10px] group-hover:opacity-100"></i></p>
-                        <p class="text-2xl font-bold text-gray-800" id="stat-forms">1</p>
+                        <p class="text-2xl font-bold text-gray-800" id="stat-forms">2</p>
                     </div>
                 </div>
             </div>
@@ -230,7 +230,7 @@
     </div>
 
     <script>
-        let currentMonth = 'november';
+        let currentMonth = 'februar';
         const monthOrder = ['november', 'december', 'januar', 'februar'];
         
         const data = {
@@ -433,12 +433,14 @@
             }
 
             monthOrder.forEach(mon => {
-                document.getElementById(`tab-${mon}`).classList.remove('tab-active');
+                const tab = document.getElementById(`tab-${mon}`);
+                if (tab) tab.classList.remove('tab-active');
             });
-            document.getElementById(`tab-${month}`).classList.add('tab-active');
+            const activeTab = document.getElementById(`tab-${month}`);
+            if (activeTab) activeTab.classList.add('tab-active');
         }
 
-        window.onload = () => switchMonth('november');
+        window.onload = () => switchMonth('februar');
     </script>
 </body>
 </html>
