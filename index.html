@@ -42,6 +42,15 @@
             display: inline-flex;
             align-items: center;
         }
+
+        .history-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.85rem 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .history-row:last-child { border-bottom: none; }
     </style>
 </head>
 <body class="p-4 md:p-8">
@@ -122,24 +131,24 @@
         <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 mb-8 text-center">
             <h4 class="text-lg font-bold text-gray-800 mb-6 uppercase tracking-widest text-sm">Effektivitets Nøgletal</h4>
             <div class="flex flex-col md:flex-row justify-around gap-8">
-                <div>
-                    <p class="text-gray-500 text-sm mb-1">Pris pr. konvertering</p>
+                <div onclick="openModal('cpa')" class="cursor-pointer group">
+                    <p class="text-gray-500 text-sm mb-1 group-hover:text-blue-600 transition-colors">Pris pr. konvertering <i class="fas fa-expand-alt text-[8px] opacity-0 group-hover:opacity-100"></i></p>
                     <div class="flex flex-col items-center">
                         <p class="text-3xl font-bold text-gray-800" id="stat-cpa">139,45 kr.</p>
                         <span id="change-cpa" class="change-badge mt-1"></span>
                     </div>
                 </div>
                 <div class="hidden md:block w-px bg-gray-100"></div>
-                <div>
-                    <p class="text-gray-500 text-sm mb-1">Klikrate (CTR)</p>
+                <div onclick="openModal('ctr')" class="cursor-pointer group">
+                    <p class="text-gray-500 text-sm mb-1 group-hover:text-blue-600 transition-colors">Klikrate (CTR) <i class="fas fa-expand-alt text-[8px] opacity-0 group-hover:opacity-100"></i></p>
                     <div class="flex flex-col items-center">
                         <p class="text-3xl font-bold text-gray-800" id="stat-ctr-big">1,20 %</p>
                         <span id="change-ctr" class="change-badge mt-1"></span>
                     </div>
                 </div>
                 <div class="hidden md:block w-px bg-gray-100"></div>
-                <div>
-                    <p class="text-gray-500 text-sm mb-1">Gns. CPC</p>
+                <div onclick="openModal('cpc')" class="cursor-pointer group">
+                    <p class="text-gray-500 text-sm mb-1 group-hover:text-blue-600 transition-colors">Gns. CPC <i class="fas fa-expand-alt text-[8px] opacity-0 group-hover:opacity-100"></i></p>
                     <div class="flex flex-col items-center">
                         <p class="text-3xl font-bold text-gray-800" id="stat-cpc-big">3,48 kr.</p>
                         <span id="change-cpc-evol" class="change-badge mt-1"></span>
@@ -189,24 +198,32 @@
 
     <!-- Global Modal Overlay -->
     <div id="modalOverlay" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 modal-overlay hidden-modal" onclick="closeModal(event)">
-        <div class="bg-white rounded-3xl max-w-lg w-full shadow-2xl modal-content p-8 relative" onclick="event.stopPropagation()">
+        <div class="bg-white rounded-3xl max-w-lg w-full shadow-2xl modal-content p-8 relative max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
             <button onclick="closeModal(event)" class="absolute top-6 right-6 text-gray-400 hover:text-gray-600">
                 <i class="fas fa-times text-xl"></i>
             </button>
             <div id="modalIconContainer" class="w-16 h-16 rounded-2xl flex items-center justify-center text-2xl mb-6"></div>
             <h2 id="modalTitle" class="text-2xl font-bold text-gray-800 mb-2"></h2>
-            <p id="modalDefinition" class="text-gray-500 text-sm leading-relaxed mb-6"></p>
+            <p id="modalDefinition" class="text-gray-600 text-sm leading-relaxed mb-6 italic"></p>
+            
             <div class="bg-gray-50 rounded-2xl p-6 mb-6">
                 <div class="flex justify-between items-end mb-4">
-                    <p class="text-xs font-bold text-gray-400 uppercase">Status denne måned</p>
-                    <p id="modalValue" class="text-3xl font-bold text-gray-800"></p>
+                    <p class="text-xs font-bold text-gray-400 uppercase">Status valgt periode</p>
+                    <div class="flex flex-col items-end">
+                        <p id="modalValue" class="text-3xl font-bold text-gray-800"></p>
+                        <span id="modalValueChange" class="change-badge mt-1"></span>
+                    </div>
                 </div>
             </div>
+            
             <div class="space-y-4">
-                <h4 class="font-bold text-gray-800 text-sm uppercase tracking-wide">Vigtig viden</h4>
-                <p id="modalInsight" class="text-gray-600 text-sm leading-relaxed italic border-l-4 border-blue-500 pl-4"></p>
+                <h4 class="font-bold text-gray-800 text-sm uppercase tracking-wide border-b pb-2">Sammenligning med tidligere</h4>
+                <div id="modalHistoryContainer" class="divide-y divide-gray-100">
+                    <!-- History rows injected here -->
+                </div>
             </div>
-            <button onclick="closeModal(event)" class="w-full mt-6 bg-gray-800 text-white font-bold py-4 rounded-xl hover:bg-gray-900 transition-colors">
+
+            <button onclick="closeModal(event)" class="w-full mt-8 bg-gray-800 text-white font-bold py-4 rounded-xl hover:bg-gray-900 transition-colors">
                 Luk vindue
             </button>
         </div>
@@ -214,6 +231,7 @@
 
     <script>
         let currentMonth = 'november';
+        const monthOrder = ['november', 'december', 'januar', 'februar'];
         
         const data = {
             november: {
@@ -222,13 +240,16 @@
                 conversionTypes: { calls: 7, websiteClicks: 2, forms: 1 },
                 changes: null,
                 modalDetails: {
-                    impressions: { icon: 'fa-search', color: 'blue', def: 'Visninger.', insight: 'Opstarts-måned.' },
-                    clicks: { icon: 'fa-mouse-pointer', color: 'yellow', def: 'Klik.', insight: 'Stabil CTR.' },
-                    conversions: { icon: 'fa-shopping-cart', color: 'green', def: 'Handlinger.', insight: 'God start.' },
-                    cost: { icon: 'fa-coins', color: 'red', def: 'Pris.', insight: 'Markedsafprøvning.' },
-                    conv_calls: { icon: 'fa-phone-volume', color: 'blue', def: 'Opkald.', insight: 'Primær kilde.' },
-                    conv_web: { icon: 'fa-envelope', color: 'indigo', def: 'E-mail.', insight: 'Supplerende kilde.' },
-                    conv_forms: { icon: 'fa-file-contract', color: 'green', def: 'Formularer.', insight: 'Direkte leads.' }
+                    impressions: { icon: 'fa-search', color: 'blue', def: 'Visninger af dine annoncer.' },
+                    clicks: { icon: 'fa-mouse-pointer', color: 'yellow', def: 'Antallet af brugere der har klikket på annoncen.' },
+                    conversions: { icon: 'fa-shopping-cart', color: 'green', def: 'Samlet antal opkald, e-mail klik og formularer.' },
+                    cost: { icon: 'fa-coins', color: 'red', def: 'Den samlede annonce-investering.' },
+                    cpa: { icon: 'fa-hand-holding-usd', color: 'blue', def: 'Prisen du i gennemsnit betaler pr. henvendelse.' },
+                    ctr: { icon: 'fa-percentage', color: 'yellow', def: 'Hvor mange der klikker ud af dem der ser annoncen.' },
+                    cpc: { icon: 'fa-tag', color: 'red', def: 'Gennemsnitsprisen pr. klik.' },
+                    conv_calls: { icon: 'fa-phone-volume', color: 'blue', def: 'Antal direkte opkald fra annoncen.' },
+                    conv_web: { icon: 'fa-envelope', color: 'indigo', def: 'Klik på e-mail links på websitet.' },
+                    conv_forms: { icon: 'fa-file-contract', color: 'green', def: 'Indsendte kontaktformularer.' }
                 }
             },
             december: {
@@ -236,22 +257,8 @@
                 impressions: "99.755", clicks: "2.788", ctr: "2,79%", conversions: "14", convRate: "0,50%", cost: "2.788,98 kr.", cpc: "1,00 kr.", cpa: "199,21 kr.", ctrBig: "2,79 %", cpcBig: "1,00 kr.",
                 conversionTypes: { calls: 10, websiteClicks: 9, forms: 1 },
                 changes: {
-                    impressions: { val: '+230%', pos: true },
-                    clicks: { val: '+672%', pos: true },
-                    conversions: { val: '+55%', pos: true },
-                    cost: { val: '+122%', pos: false },
-                    cpa: { val: '+43%', pos: false },
-                    ctr: { val: '+132%', pos: true },
-                    cpc: { val: '-71%', pos: true }
-                },
-                modalDetails: {
-                    impressions: { icon: 'fa-search', color: 'blue', def: 'Visninger.', insight: 'Høj volumen stigning.' },
-                    clicks: { icon: 'fa-mouse-pointer', color: 'yellow', def: 'Klik.', insight: 'Massiv vækst i trafik.' },
-                    conversions: { icon: 'fa-shopping-cart', color: 'green', def: 'Handlinger.', insight: 'Flere henvendelser.' },
-                    cost: { icon: 'fa-coins', color: 'red', def: 'Pris.', insight: 'Budget udvidelse.' },
-                    conv_calls: { icon: 'fa-phone-volume', color: 'blue', def: 'Opkald.', insight: 'Flere direkte henvendelser.' },
-                    conv_web: { icon: 'fa-envelope', color: 'indigo', def: 'E-mail.', insight: 'Stigning i skriftlig interesse.' },
-                    conv_forms: { icon: 'fa-file-contract', color: 'green', def: 'Formularer.', insight: 'Uændret.' }
+                    impressions: { val: '+230%', pos: true }, clicks: { val: '+672%', pos: true }, conversions: { val: '+55%', pos: true },
+                    cost: { val: '+122%', pos: false }, cpa: { val: '+43%', pos: false }, ctr: { val: '+132%', pos: true }, cpc: { val: '-71%', pos: true }
                 }
             },
             januar: {
@@ -259,22 +266,8 @@
                 impressions: "389.314", clicks: "12.639", ctr: "3,25%", conversions: "59", convRate: "0,14%", cost: "13.928,67 kr.", cpc: "1,10 kr.", cpa: "236,08 kr.", ctrBig: "3,25 %", cpcBig: "1,10 kr.",
                 conversionTypes: { calls: 52, websiteClicks: 38, forms: 8 },
                 changes: {
-                    impressions: { val: '+290%', pos: true },
-                    clicks: { val: '+353%', pos: true },
-                    conversions: { val: '+321%', pos: true },
-                    cost: { val: '+399%', pos: false },
-                    cpa: { val: '+18%', pos: false },
-                    ctr: { val: '+16%', pos: true },
-                    cpc: { val: '+10%', pos: false }
-                },
-                modalDetails: {
-                    impressions: { icon: 'fa-search', color: 'blue', def: 'Visninger.', insight: 'Maksimal rækkevidde.' },
-                    clicks: { icon: 'fa-mouse-pointer', color: 'yellow', def: 'Klik.', insight: 'Rekord trafik.' },
-                    conversions: { icon: 'fa-shopping-cart', color: 'green', def: 'Handlinger.', insight: 'Rekord i henvendelser.' },
-                    cost: { icon: 'fa-coins', color: 'red', def: 'Pris.', insight: 'Stor investering.' },
-                    conv_calls: { icon: 'fa-phone-volume', color: 'blue', def: 'Opkald.', insight: 'Dominant kanal.' },
-                    conv_web: { icon: 'fa-envelope', color: 'indigo', def: 'E-mail.', insight: 'Høj volumen.' },
-                    conv_forms: { icon: 'fa-file-contract', color: 'green', def: 'Formularer.', insight: 'Væsentlig stigning.' }
+                    impressions: { val: '+290%', pos: true }, clicks: { val: '+353%', pos: true }, conversions: { val: '+321%', pos: true },
+                    cost: { val: '+399%', pos: false }, cpa: { val: '+18%', pos: false }, ctr: { val: '+16%', pos: true }, cpc: { val: '+10%', pos: false }
                 }
             },
             februar: {
@@ -282,25 +275,18 @@
                 impressions: "106.368", clicks: "3.053", ctr: "2,87%", conversions: "25", convRate: "0,72%", cost: "2.556,50 kr.", cpc: "0,84 kr.", cpa: "102,26 kr.", ctrBig: "2,87 %", cpcBig: "0,84 kr.",
                 conversionTypes: { calls: 21, websiteClicks: 5, forms: 2 },
                 changes: {
-                    impressions: { val: '-72%', pos: false },
-                    clicks: { val: '-75%', pos: false },
-                    conversions: { val: '-57%', pos: false },
-                    cost: { val: '-81%', pos: true },
-                    cpa: { val: '-56%', pos: true },
-                    ctr: { val: '-11%', pos: false },
-                    cpc: { val: '-23%', pos: true }
-                },
-                modalDetails: {
-                    impressions: { icon: 'fa-search', color: 'blue', def: 'Visninger.', insight: 'Målrettet rækkevidde.' },
-                    clicks: { icon: 'fa-mouse-pointer', color: 'yellow', def: 'Klik.', insight: 'Kvalitets trafik.' },
-                    conversions: { icon: 'fa-shopping-cart', color: 'green', def: 'Handlinger.', insight: 'Høj effektivitet.' },
-                    cost: { icon: 'fa-coins', color: 'red', def: 'Pris.', insight: 'Optimeret forbrug.' },
-                    conv_calls: { icon: 'fa-phone-volume', color: 'blue', def: 'Opkald.', insight: 'Stabil kontakt.' },
-                    conv_web: { icon: 'fa-envelope', color: 'indigo', def: 'E-mail.', insight: 'Fald i volumen.' },
-                    conv_forms: { icon: 'fa-file-contract', color: 'green', def: 'Formularer.', insight: 'Fokuseret.' }
+                    impressions: { val: '-72%', pos: false }, clicks: { val: '-75%', pos: false }, conversions: { val: '-57%', pos: false },
+                    cost: { val: '-81%', pos: true }, cpa: { val: '-56%', pos: true }, ctr: { val: '-11%', pos: false }, cpc: { val: '-23%', pos: true }
                 }
             }
         };
+
+        function parseVal(str) {
+            if (!str) return 0;
+            if (typeof str === 'number') return str;
+            let cleaned = str.toString().replace(' kr.', '').replace('%', '').replace(/\./g, '').replace(',', '.').trim();
+            return parseFloat(cleaned) || 0;
+        }
 
         function setChange(elementId, changeData) {
             const el = document.getElementById(elementId);
@@ -309,37 +295,99 @@
                 return;
             }
             el.style.display = 'inline-flex';
-            el.innerText = changeData.val;
             el.className = `change-badge ${changeData.pos ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`;
             el.innerHTML = `<i class="fas fa-arrow-${changeData.val.startsWith('+') ? 'up' : 'down'} mr-1"></i> ${changeData.val}`;
         }
 
+        function getMetricValue(month, metricType) {
+            const m = data[month];
+            if(metricType === 'impressions') return m.impressions;
+            if(metricType === 'clicks') return m.clicks;
+            if(metricType === 'conversions') return m.conversions;
+            if(metricType === 'cost') return m.cost;
+            if(metricType === 'cpa') return m.cpa;
+            if(metricType === 'ctr') return m.ctr;
+            if(metricType === 'cpc') return m.cpc;
+            if(metricType === 'conv_calls') return m.conversionTypes.calls;
+            if(metricType === 'conv_web') return m.conversionTypes.websiteClicks;
+            if(metricType === 'conv_forms') return m.conversionTypes.forms;
+            return "0";
+        }
+
         function openModal(metricType) {
+            const currentIdx = monthOrder.indexOf(currentMonth);
             const mData = data[currentMonth];
-            const detail = mData.modalDetails[metricType];
+            const detail = data.november.modalDetails[metricType];
+            
             const overlay = document.getElementById('modalOverlay');
             const iconContainer = document.getElementById('modalIconContainer');
             const title = document.getElementById('modalTitle');
             const def = document.getElementById('modalDefinition');
             const value = document.getElementById('modalValue');
-            const insight = document.getElementById('modalInsight');
+            const valueChange = document.getElementById('modalValueChange');
+            const historyContainer = document.getElementById('modalHistoryContainer');
 
-            const titles = { impressions: 'Eksponeringer', clicks: 'Klik & CTR', conversions: 'Konverteringer', cost: 'Annonceforbrug', conv_calls: 'Opkald', conv_web: 'E-mail Klik', conv_forms: 'Formularer' };
+            const titles = { 
+                impressions: 'Eksponeringer', clicks: 'Klik', conversions: 'Konverteringer', 
+                cost: 'Annonceforbrug', cpa: 'Pris pr. konv.', ctr: 'Klikrate (CTR)', 
+                cpc: 'Gns. CPC', conv_calls: 'Opkald', conv_web: 'E-mail Klik', conv_forms: 'Formularer' 
+            };
             const colors = { blue: 'bg-blue-100 text-blue-600', yellow: 'bg-yellow-100 text-yellow-600', green: 'bg-green-100 text-green-600', red: 'bg-red-100 text-red-600', indigo: 'bg-indigo-100 text-indigo-600' };
 
             iconContainer.className = `w-16 h-16 rounded-2xl flex items-center justify-center text-2xl mb-6 ${colors[detail.color]}`;
             iconContainer.innerHTML = `<i class="fas ${detail.icon}"></i>`;
             title.innerText = titles[metricType];
             def.innerText = detail.def;
-            insight.innerText = detail.insight;
             
-            if(metricType === 'impressions') value.innerText = mData.impressions;
-            else if(metricType === 'clicks') value.innerText = mData.clicks;
-            else if(metricType === 'conversions') value.innerText = mData.conversions;
-            else if(metricType === 'cost') value.innerText = mData.cost;
-            else if(metricType === 'conv_calls') value.innerText = mData.conversionTypes.calls;
-            else if(metricType === 'conv_web') value.innerText = mData.conversionTypes.websiteClicks;
-            else if(metricType === 'conv_forms') value.innerText = mData.conversionTypes.forms;
+            const currentValStr = getMetricValue(currentMonth, metricType);
+            const currentValNum = parseVal(currentValStr);
+            value.innerText = currentValStr;
+
+            const currentChange = mData.changes ? mData.changes[metricType] : null;
+            if (currentChange) {
+                valueChange.style.display = 'inline-flex';
+                valueChange.className = `change-badge mt-1 ${currentChange.pos ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`;
+                valueChange.innerHTML = `<i class="fas fa-arrow-${currentChange.val.startsWith('+') ? 'up' : 'down'} mr-1"></i> ${currentChange.val} vs forrige måned`;
+            } else {
+                valueChange.style.display = 'none';
+            }
+
+            // Generate History - Compare selected month vs history month
+            historyContainer.innerHTML = '';
+            let historyCount = 0;
+            for (let i = currentIdx - 1; i >= 0 && historyCount < 3; i--) {
+                const histMonth = monthOrder[i];
+                const histValStr = getMetricValue(histMonth, metricType);
+                const histValNum = parseVal(histValStr);
+                
+                // Calculate percentage change relative to the historical value
+                let pct = histValNum === 0 ? 0 : ((currentValNum - histValNum) / histValNum) * 100;
+                let isGood = pct > 0;
+                // For price metrics, lower is better
+                if (['cost', 'cpa', 'cpc'].includes(metricType)) isGood = pct < 0;
+                
+                const pctStr = (pct >= 0 ? '+' : '') + pct.toFixed(0) + '%';
+                const colorClass = isGood ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50';
+                const icon = pct >= 0 ? 'fa-arrow-up' : 'fa-arrow-down';
+
+                const row = document.createElement('div');
+                row.className = 'history-row';
+                row.innerHTML = `
+                    <div class="flex flex-col">
+                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">${histMonth}</span>
+                        <span class="text-sm font-bold text-gray-700">${histValStr} <span class="text-gray-300 font-medium mx-1 text-xs">vs</span> ${currentValStr}</span>
+                    </div>
+                    <span class="text-[10px] font-bold ${colorClass} px-2 py-1 rounded-full flex items-center">
+                        <i class="fas ${icon} mr-1"></i> ${pctStr}
+                    </span>
+                `;
+                historyContainer.appendChild(row);
+                historyCount++;
+            }
+
+            if (historyCount === 0) {
+                historyContainer.innerHTML = '<p class="text-xs text-gray-400 italic py-4">Første måned i rapporten. Ingen historik endnu.</p>';
+            }
 
             overlay.classList.remove('hidden-modal');
             document.body.style.overflow = 'hidden';
@@ -359,7 +407,7 @@
             document.getElementById('stat-clicks').innerText = m.clicks;
             document.getElementById('stat-ctr').innerText = `CTR: ${m.ctr}`;
             document.getElementById('stat-conversions').innerText = m.conversions;
-            document.getElementById('stat-conv-rate').innerText = `Rate: ${m.convRate}`;
+            document.getElementById('stat-conv-rate').innerText = `Rate: ${m.convRate || "N/A"}`;
             document.getElementById('stat-cost').innerText = m.cost;
             document.getElementById('stat-cpc').innerText = `Gns. CPC: ${m.cpc}`;
             document.getElementById('stat-cpa').innerText = m.cpa;
@@ -384,7 +432,7 @@
                 });
             }
 
-            ['november', 'december', 'januar', 'februar'].forEach(mon => {
+            monthOrder.forEach(mon => {
                 document.getElementById(`tab-${mon}`).classList.remove('tab-active');
             });
             document.getElementById(`tab-${month}`).classList.add('tab-active');
